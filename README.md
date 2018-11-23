@@ -1,2 +1,2 @@
-KitchenBeats - Reactive accent lighting
+TVBeats - Reactive accent lighting 
 ====================

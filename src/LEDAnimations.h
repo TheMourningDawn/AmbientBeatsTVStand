@@ -7,8 +7,7 @@
 
 FASTLED_USING_NAMESPACE;
 
-#define NUM_LEDS 140
-#define BRIGHTNESS 230
+#define NUM_LEDS 152
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
@@ -18,16 +17,32 @@ class LEDAnimations
     SpectrumEqualizerClient *equalizer;
   public:
     CRGB leds[NUM_LEDS];
-    int currentHue;
+
+    bool poweredOn = true;
+
+    bool musicReactive = true;
+    int animationCount;
+    int globalSensitivity = 0;
+    int currentAnimation = 0;
+    int hue = 120;
+    int saturation = 255;
+    int brightness = 255;
 
     LEDAnimations();
     LEDAnimations(SpectrumEqualizerClient* eq);
 
+    void setCurrentBrightness(int brightness);
+    void setCurrentSaturation(int saturation);
+
+    int getCurrentAnimation();
     int runCurrentAnimation();
-    int nextPattern();
-    int previousPattern();
-    void nextFrequencyMode();
-    void previousFrequencyMode();
+    int nextAnimation();
+    int previousAnimation();
+    int setAnimation(int animationNumber);
+    int nextFrequencyMode();
+    int previousFrequencyMode();
+
+    bool toggleAudioReactive();
 
     int clampToRange(int numberToClamp, int lowerBound, int upperBound);
     int clampSensitivity(int sensitivity);
@@ -55,8 +70,6 @@ class LEDAnimations
 
     bool getMusicReactive();
     void setMusicReactive(bool newMusicReactiveValue);
-
-    int getNumberOfPatterns();
 };
 
 #endif
