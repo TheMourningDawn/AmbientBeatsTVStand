@@ -64,7 +64,7 @@ void LEDAnimations::rainbowSlide() {
 void LEDAnimations::confetti() {
     uint8_t position = random16(NUM_LEDS);
     int frequencyValue = equalizer->frequenciesLeftChannel[frequencyMode[0]];
-    uint16_t frequencyThreshold = clampSensitivity(sensitivity + 600);
+    uint16_t frequencyThreshold = clampSensitivity(sensitivity);
 
     fadeToBlackBy(leds, NUM_LEDS, 10);
 
@@ -76,20 +76,20 @@ void LEDAnimations::confetti() {
 // a colored dot sweeping back and forth, with fading trails
 void LEDAnimations::sinelon() {
     int frequencyValue = equalizer->frequenciesLeftChannel[frequencyMode[0]];
-    uint16_t frequencyThreshold = clampSensitivity(sensitivity + 600);
+    uint16_t frequencyThreshold = clampSensitivity(sensitivity);
 
     fadeToBlackBy(leds, NUM_LEDS, 1);
 
-//    if(!audioReactiveOn || (frequencyValue > frequencyThreshold)) {
-    int pos = beatsin16(13, 0, NUM_LEDS);
-    leds[pos] += CHSV(hue, saturation, brightness);
-//    }
+    if(!audioReactiveOn || (frequencyValue > frequencyThreshold)) {
+        int pos = beatsin16(13, 0, NUM_LEDS);
+        leds[pos] += CHSV(hue, saturation, brightness);
+    }
 }
 
 // eight colored dots, weaving in and out of sync with each other
 void LEDAnimations::juggle() {
     int frequencyValue = equalizer->frequenciesLeftChannel[frequencyMode[0]];
-    uint16_t frequencyThreshold = clampSensitivity(sensitivity + 600);
+    uint16_t frequencyThreshold = clampSensitivity(sensitivity);
 
     fadeToBlackBy(leds, NUM_LEDS, 20);
     byte dothue = 0;
@@ -103,14 +103,14 @@ void LEDAnimations::juggle() {
 }
 
 void LEDAnimations::waterfall() {
-    int sensitivityValueMinThreshold = clampSensitivity(sensitivity + 700);
+    int sensitivityValueMinThreshold = clampSensitivity(sensitivity);
     waterfallBorder(equalizer->frequenciesLeftChannel[frequencyMode[4]], sensitivityValueMinThreshold, brightness);
 }
 
 void LEDAnimations::waterfallBorder(int frequencyValue, int frequencyValueMinThreshold, int brightness) {
     if (!audioReactiveOn || frequencyValue > frequencyValueMinThreshold) {
         int mappedFrequencyValue = map(frequencyValue, frequencyValueMinThreshold, 4096, 0, 255);
-        mappedFrequencyValue = (mappedFrequencyValue + 120) % 255; //offsetting the base color...
+        mappedFrequencyValue = (mappedFrequencyValue) % 255; //offsetting the base color...
         leds[NUM_LEDS / 2] = CHSV(mappedFrequencyValue, saturation, brightness);
     } else {
         leds[NUM_LEDS / 2] = CRGB(0, 0, 0);
@@ -137,8 +137,8 @@ void LEDAnimations::waterfallRainbowBorder() {
 
 void LEDAnimations::equalizerBorderOnly() {
     fadeToBlackBy(leds, NUM_LEDS, 10);
-    equalizerLeft(equalizer->frequenciesLeftChannel[frequencyMode[1]], clampSensitivity(sensitivity + 400), true);
-    equalizerRight(equalizer->frequenciesLeftChannel[frequencyMode[6]], clampSensitivity(sensitivity + 400), true);
+    equalizerLeft(equalizer->frequenciesLeftChannel[frequencyMode[1]], clampSensitivity(sensitivity), true);
+    equalizerRight(equalizer->frequenciesLeftChannel[frequencyMode[6]], clampSensitivity(sensitivity), true);
 }
 
 void LEDAnimations::equalizerRight(int frequencyValue, int sensitivityThreshold, bool direction) {
