@@ -32,7 +32,7 @@ void loop() {
     if(animations->poweredOn) {
 //      readColorFromRemote();
 
-        animations->runCurrentAnimation();
+        animations->runAnimation();
         FastLED.show();
     }
 }
@@ -44,6 +44,6 @@ void connectToRemote() {
 
 void readColorFromRemote() {
     if(udpMulticast.parsePacket() > 0) {
-        animations->currentHue = udpMulticast.read() << 8 | udpMulticast.read();
+        animations->hue = udpMulticast.read() << 8 | udpMulticast.read();
     }
 }
