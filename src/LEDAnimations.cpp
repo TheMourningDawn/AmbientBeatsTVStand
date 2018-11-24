@@ -6,13 +6,16 @@
 
 CRGB leds[NUM_LEDS];
 
-LEDAnimations::LEDAnimations(SpectrumEqualizerClient *eq) : AmbientBeatsLEDAnimations(eq) {
-    AnimationList animationsAudioReactive[] = {&LEDAnimations::waterfall, &LEDAnimations::equalizerBorderOnly};
+typedef void (LEDAnimations::*AnimationList)();
 
-    AnimationList animationsRails[] = {&LEDAnimations::sinelon, &LEDAnimations::confetti, &LEDAnimations::juggle,
-                                                                  &LEDAnimations::fillColor, &LEDAnimations::rainbow,
-                                                                  &LEDAnimations::rainbowSlide,
-                                                                  &LEDAnimations::waterfallRainbowBorder};
+AnimationList animationsAudioReactive[] = {&LEDAnimations::waterfall, &LEDAnimations::equalizerBorderOnly};
+
+AnimationList animationsRails[] = {&LEDAnimations::sinelon, &LEDAnimations::confetti, &LEDAnimations::juggle,
+                                   &LEDAnimations::fillColor, &LEDAnimations::rainbow,
+                                   &LEDAnimations::rainbowSlide,
+                                   &LEDAnimations::waterfallRainbowBorder};
+
+LEDAnimations::LEDAnimations(SpectrumEqualizerClient *eq) : AmbientBeatsLEDAnimations(eq) {
     animationCount = ARRAY_SIZE(animationsAudioReactive);
 }
 

@@ -17,11 +17,6 @@ public:
 
     CRGB leds[NUM_LEDS];
 
-    typedef void (LEDAnimations::*AnimationList)();
-
-    AnimationList animationsAudioReactive[];
-    AnimationList animationsRails[];
-
     int runAnimation();
     int toggleAudioReactive();
 
