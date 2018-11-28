@@ -23,8 +23,6 @@ void setup() {
     animations = new LEDAnimations(audioEqualizer);
     cloudFunctions = new AmbientBeatsCloudFunctions(animations);
 
-    cloudFunctions->setupCloudModeFunctions();
-
     FastLED.addLeds<LED_TYPE, BORDER_LED_PIN, COLOR_ORDER>(animations->leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 }
 
