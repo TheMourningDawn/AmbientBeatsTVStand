@@ -12,13 +12,8 @@ SpectrumEqualizerClient *audioEqualizer;
 LEDAnimations *animations;
 AmbientBeatsCloudFunctions *cloudFunctions;
 
-UDP udpMulticast;
-int udpPort = 47555;
-IPAddress udpIP(239,1,1,232);
-
-
 void setup() {
-//    connectToRemote();
+//    Serial.begin(115200);
     audioEqualizer = new SpectrumEqualizerClient();
     animations = new LEDAnimations(audioEqualizer);
     cloudFunctions = new AmbientBeatsCloudFunctions(animations);
@@ -28,20 +23,7 @@ void setup() {
 
 void loop() {
     if(animations->poweredOn) {
-//      readColorFromRemote();
-
         animations->runAnimation();
         FastLED.show();
-    }
-}
-
-void connectToRemote() {
-    udpMulticast.begin(udpPort);
-    udpMulticast.joinMulticast(udpIP);
-}
-
-void readColorFromRemote() {
-    if(udpMulticast.parsePacket() > 0) {
-        animations->hue = udpMulticast.read() << 8 | udpMulticast.read();
     }
 }
