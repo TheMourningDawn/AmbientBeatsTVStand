@@ -8,7 +8,8 @@ CRGB leds[NUM_LEDS];
 
 typedef void (LEDAnimations::*AnimationList)();
 
-AnimationList animationsAudioReactive[] = {&LEDAnimations::waterfall, &LEDAnimations::equalizerBorderOnly};
+AnimationList animationsAudioReactive[] = {&LEDAnimations::waterfall, &LEDAnimations::equalizerAnimation, &LEDAnimations::sinelon,
+                                           &LEDAnimations::confetti, &LEDAnimations::juggle};
 
 AnimationList animationsRails[] = {&LEDAnimations::sinelon, &LEDAnimations::confetti, &LEDAnimations::juggle,
                                    &LEDAnimations::fillColor, &LEDAnimations::rainbow,
@@ -100,12 +101,9 @@ void LEDAnimations::juggle() {
 }
 
 void LEDAnimations::waterfall() {
-    int sensitivityValueMinThreshold = clampSensitivity(sensitivity);
-    waterfallBorder(equalizer->frequenciesLeftChannel[frequencyMode[4]], sensitivityValueMinThreshold, brightness);
-}
-
-void LEDAnimations::waterfallBorder(int frequencyValue, int frequencyValueMinThreshold, int brightness) {
-    if (!audioReactiveOn || frequencyValue > frequencyValueMinThreshold) {
+    int frequencyValue = (equalizer->frequenciesLeftChannel[frequencyMode[4]] + equalizer->frequenciesLeftChannel[frequencyMode[4]])/2;
+    int frequencyValueMinThreshold = clampSensitivity(sensitivity);
+    if (frequencyValue > frequencyValueMinThreshold) {
         uint16_t mappedFrequencyValue = map(frequencyValue, frequencyValueMinThreshold, 4096, 0, 255);
         mappedFrequencyValue = (mappedFrequencyValue) % 255; //offsetting the base color...
         leds[NUM_LEDS / 2] = CHSV(mappedFrequencyValue, saturation, brightness);
@@ -117,14 +115,7 @@ void LEDAnimations::waterfallBorder(int frequencyValue, int frequencyValueMinThr
     memmove(&leds[NUM_LEDS / 2 + 1], &leds[NUM_LEDS / 2], (NUM_LEDS / 2) * sizeof(CRGB));
 }
 
-void LEDAnimations::waterfallBorderRemote() {
-    leds[NUM_LEDS / 2] = CHSV(hue, saturation, brightness);
-    memmove(&leds[0], &leds[1], (NUM_LEDS / 2) * sizeof(CRGB));
-    memmove(&leds[NUM_LEDS / 2 + 1], &leds[NUM_LEDS / 2], (NUM_LEDS / 2) * sizeof(CRGB));
-}
-
 uint8_t hueCounter = 0;
-
 void LEDAnimations::waterfallRainbowBorder() {
     leds[NUM_LEDS / 2] = CHSV(hueCounter, saturation, brightness);
     memmove(&leds[0], &leds[1], (NUM_LEDS / 2) * sizeof(CRGB));
@@ -132,32 +123,30 @@ void LEDAnimations::waterfallRainbowBorder() {
     hueCounter++;
 }
 
-void LEDAnimations::equalizerBorderOnly() {
+void LEDAnimations::equalizerAnimation() {
     fadeToBlackBy(leds, NUM_LEDS, 10);
-    equalizerLeft(equalizer->frequenciesLeftChannel[frequencyMode[1]], clampSensitivity(sensitivity), true);
-    equalizerRight(equalizer->frequenciesLeftChannel[frequencyMode[6]], clampSensitivity(sensitivity), true);
+    equalizerLeft(equalizer->frequenciesLeftChannel[frequencyMode[1]]);
+    equalizerRight(equalizer->frequenciesLeftChannel[frequencyMode[6]]);
 }
 
-void LEDAnimations::equalizerRight(int frequencyValue, int sensitivityThreshold, bool direction) {
+void LEDAnimations::equalizerRight(int frequencyValue) {
+    int sensitivityThreshold = clampSensitivity(sensitivity);
     if (frequencyValue > sensitivityThreshold) {
-        uint16_t numberToLight = map(frequencyValue, sensitivityThreshold, 3500, 0, NUM_LEDS / 2 - 1);
+        uint16_t numberToLight = map(frequencyValue, sensitivityThreshold, 4096, 0, NUM_LEDS / 2 - 1);
         CRGB color = CHSV(map(frequencyValue, sensitivityThreshold, 4096, 0, 255), saturation, brightness);
-        if (direction) {
-            for (int i = NUM_LEDS / 2 + 1; i < NUM_LEDS / 2 + 1 + numberToLight; i++) {
-                leds[i] = color;
-            }
+        for (int i = NUM_LEDS / 2 + 1; i < NUM_LEDS / 2 + 1 + numberToLight; i++) {
+            leds[i] = color;
         }
     }
 }
 
-void LEDAnimations::equalizerLeft(int frequencyValue, int sensitivityThreshold, bool direction) {
+void LEDAnimations::equalizerLeft(int frequencyValue) {
+    int sensitivityThreshold = clampSensitivity(sensitivity);
     if (frequencyValue > sensitivityThreshold) {
         uint16_t numberToLight = map(frequencyValue, sensitivityThreshold, 3500, 0, NUM_LEDS / 2 - 1);
         CRGB color = CHSV(map(frequencyValue, sensitivityThreshold, 4096, 0, 255), saturation, brightness);
-        if (direction) {
-            for (int i = NUM_LEDS / 2; i > NUM_LEDS / 2 - numberToLight; i--) {
-                leds[i] = color;
-            }
+        for (int i = NUM_LEDS / 2; i > NUM_LEDS / 2 - numberToLight; i--) {
+            leds[i] = color;
         }
     }
 }
