@@ -21,8 +21,10 @@ LEDAnimations::LEDAnimations(SpectrumEqualizerClient *eq) : AmbientBeatsLEDAnima
 }
 
 int LEDAnimations::runAnimation() {
-    equalizer->readAudioFrequencies();
+    delay(speed);
+    this->runColorLoop();
     if (audioReactiveOn) {
+        equalizer->readAudioFrequencies();
         (this->*animationsAudioReactive[animation])();
     } else {
         (this->*animationsRails[animation])();
